@@ -1,0 +1,44 @@
+extends _layout
+
+block page
+	- var page = 'index'
+	
+block content
+	header
+		nav.navbar.navbar-ox
+			.container
+				.navbar-header
+					a.navbar-brand(href="#/") Trello
+	main
+		section(ng-controller="listsCtrl")
+			.container
+				.row
+					.col-sm-6.col-md-3(ng-repeat="list in lists", ng-controller="listCtrl")
+						section.list
+							button.close(type="button", ng-click="removeList($index)") &times;
+							header(ng-cloak) {{list.title}}
+							.card(ng-repeat="card in cards | filter: { list_id: list.id }", ng-controller="cardCtrl")
+								article(ng-if="!cardEditing")
+									.btn-group.btn-group-right.card-actions
+										button.btn.btn-default.btn-xs(type="button", ng-click="editCard(card.id)"): span.glyphicon.glyphicon-pencil
+										button.btn.btn-default.btn-xs(type="button", ng-click="removeCard(card.id)"): span.glyphicon.glyphicon-remove
+									header(ng-cloak) {{card.title}}
+								form.add-card(ng-submit="updateCard()", ng-if="cardEditing")
+									header Edit Card
+									.form-group
+										label.label(for="card_title") Change Title
+										input.form-control#card_title(type="text", ng-model="card.title", ng-keyup="escCardEdit($event)")
+									.form-group
+										label.label(for="card_list") Change List
+										select.form-control#card_list(ng-model="card.list_id", ng-options="list.id as list.title for list in lists")
+											option(value="") --select list--
+							form.add-card(ng-submit="addCard(list.id)")
+								header Add New Card
+								.form-group
+									input.form-control(type="text", ng-model="cardTitle")
+
+					.col-sm-6.col-md-3
+						form.add-list(ng-submit="addList()")
+							header Add New List
+								.form-group
+									input.form-control(type="text", ng-model="listTitle")

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!--[if IE 7]><html class="ie7"><![endif]-->
+<!--[if IE 8]><html class="ie8"><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html ng-app="trello">
+  <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <header>
+      <nav class="navbar navbar-ox">
+        <div class="container">
+          <div class="navbar-header"><a href="#/" class="navbar-brand">Trello</a></div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <section ng-controller="listsCtrl">
+        <div class="container">
+          <div class="row">
+            <div ng-repeat="list in lists" ng-controller="listCtrl" class="col-sm-6 col-md-3">
+              <section class="list">
+                <button type="button" ng-click="removeList($index)" class="close">&times;</button>
+                <header ng-cloak>{{list.title}}</header>
+                <div ng-repeat="card in cards | filter: { list_id: list.id }" ng-controller="cardCtrl" class="card">
+                  <article ng-if="!cardEditing">
+                    <div class="btn-group btn-group-right card-actions">
+                      <button type="button" ng-click="editCard(card.id)" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>
+                      <button type="button" ng-click="removeCard(card.id)" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+                    <header ng-cloak>{{card.title}}</header>
+                  </article>
+                  <form ng-submit="updateCard()" ng-if="cardEditing" class="add-card">
+                    <header>Edit Card</header>
+                    <div class="form-group">
+                      <label for="card_title" class="label">Change Title</label>
+                      <input id="card_title" type="text" ng-model="card.title" ng-keyup="escCardEdit($event)" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label for="card_list" class="label">Change List</label>
+                      <select id="card_list" ng-model="card.list_id" ng-options="list.id as list.title for list in lists" class="form-control">
+                        <option value="">--select list--</option>
+                      </select>
+                    </div>
+                  </form>
+                </div>
+                <form ng-submit="addCard(list.id)" class="add-card">
+                  <header>Add New Card</header>
+                  <div class="form-group">
+                    <input type="text" ng-model="cardTitle" class="form-control">
+                  </div>
+                </form>
+              </section>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <form ng-submit="addList()" class="add-list">
+                <header>Add New List
+                  <div class="form-group">
+                    <input type="text" ng-model="listTitle" class="form-control">
+                  </div>
+                </header>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!--SCRIPTS-->
+    <script src="js/lib/angular.min.js"></script>
+    <script src="js/scripts.min.js"></script>
+  </body>
+</html>
